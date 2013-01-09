@@ -1,0 +1,28 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9" />
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples 
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Global Water Rounds Admin page </title>
+    
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="css/page.css">
+    
+    <script type="text/javascript">  var dojoConfig = { parseOnLoad: true };</script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+    <script type="text/javascript" src="Scripts/rounds.js"> </script>
+
+  </head>
+  
+  <body class="claro">
+    <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline', gutters:false" style="width:100%;height:100%;">
+      <div id="detailPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'">
+        Global Water Rounds Admin page 
+      </div>
+      <div data-dojo-type="dijit.layout.ContentPane" class="roundedCorners" data-dojo-props="region:'center'" id="mapDiv"></div>
+    </div>
+  </body>
+</html>

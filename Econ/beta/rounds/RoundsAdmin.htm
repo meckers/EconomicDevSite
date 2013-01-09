@@ -1,0 +1,100 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=7, IE=9" />
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Global Water Rounds Admin</title>
+
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dojox/grid/resources/Grid.css">
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dojox/grid/resources/claroGrid.css">
+    <script type="text/javascript">dojoConfig = { parseOnLoad: true }</script>
+    <link rel="stylesheet" type="text/css" href="css/roundsAdmin.css"  />
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+    <script type="text/javascript" src="Scripts/roundsAdmin.js" ></script>
+    
+  </head>
+  <body class="claro">
+  <div data-dojo-type="dijit.layout.BorderContainer" data-dojo-props="design:'headline'"  style="width:100%;height:100%;margin:0;">
+    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'top'" style="height:40px;">
+      <select id="ownerName">
+        <option value="volvo" selected="selected"> Choose a Facility </option>
+        <option value="Terrazo WDC"> Terrazo WDC </option>
+        <option value="Legends WDC"> Legends WDC </option>
+        <option value="Rancho Mirage WDC"> Rancho Mirage WDC </option>
+        <option value="Loves Tank"> Loves Tank </option>
+        <option value="AZ Machinery Tank Site"> AZ Machinery Tank Site </option>
+        <option value="Miller Manor"> Miller Manor </option>
+        <option value="Rio Mountain"> Rio Mountain </option>
+        <option value="Apache Road Booster Station"> Apache Road Booster Station </option>
+        <option value="Sweetwater 1"> Sweetwater 1 </option>
+        <option value="B&D"> B&D </option>
+        <option value="WPE #3"> WPE #3 </option>
+        <option value="WPE #4"> WPE #4 </option>
+        <option value="WPE #5"> WPE #5 </option>
+        <option value="Hacienda Acres WDC"> Hacienda Acres WDC </option>
+        <option value="Global Water Center"> Global Water Center </option>
+        <option value="WPE #2"> WPE #2 </option>
+        <option value="Buckeye North Tank"> Buckeye North Tank </option>
+        <option value="Lower Buckeye & Apache"> Lower Buckeye & Apache </option>
+        <option value="Northwood Tank"> Northwood Tank </option>
+        <option value="Rancho Vista"> Rancho Vista </option>
+        <option value="Westpark"> Westpark </option>
+        <option value="Granite Mountain"> Granite Mountain </option>
+        <option value="King Street"> King Street </option>
+        <option value="Cimmaron"> Cimmaron </option>
+        <option value="Unit 17 Well"> Unit 17 Well </option>
+        <option value="Commercial Street"> Commercial Street </option>
+        <option value="Miller Road Booster Station"> Miller Road Booster Station </option>
+        <option value="Bulfer/Primrose"> Bulfer/Primrose </option>
+        <option value="Sweetwater 2"> Sweetwater 2 </option>
+        <option value="Sonoran Ridge"> Sonoran Ridge </option>
+        <option value="Sun Valley Ranches"> Sun Valley Ranches </option>
+        <option value="Dixie"> Dixie </option>
+        <option value="Sunshine"> Sunshine </option>
+        <option value="Buckeye Ranch (Old)"> Buckeye Ranch (Old) </option>
+        <option value="Tufte WPE #7"> Tufte WPE #7 </option>
+        <option value="WPE #1"> WPE #1 </option>
+        <option value="Roseview"> Roseview </option>
+        <option value="Garden City/Big Horn"> Garden City/Big Horn </option>
+        <option value="WPE #6 (hot well)"> WPE #6 (hot well) </option>
+        <option value="Rancho El Dorado WDC"> Rancho El Dorado WDC </option>
+        <option value="Maricopa Groves WDC"> Maricopa Groves WDC </option>
+        <option value="Maricopa Meadows WDC"> Maricopa Meadows WDC </option>
+        <option value="Sonoran Vista SW WDC="> Sonoran Vista SW WDC= </option>
+        <option value="4th & Central"> 4th & Central </option>
+        <option value="4th & Baseline"> 4th & Baseline </option>
+        <option value="Blue Hills"> Blue Hills </option>
+        <option value="7th & Alarcon"> 7th & Alarcon </option>
+        <option value="Bales School WDC"> Bales School WDC </option>
+        <option value="Valencia Office"> Valencia Office </option>
+        <option value="Schult WDC"> Schult WDC </option>
+      </select> 
+      <button data-dojo-type="dijit.form.Button"  data-dojo-props='onClick:function(){ doFind();}, value:"Search"'>
+        Search
+      </button></div>
+    <div id="leftPane" data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'left'">
+         <div id="templatePickerDiv"></div>
+       
+    </div>
+    <div id="map" data-dojo-props="region:'center'" data-dojo-type="dijit.layout.ContentPane" style="border:1px solid #000;"></div>
+    <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom'" style="height:75px;">
+     <table data-dojo-type="dojox.grid.DataGrid" data-dojo-id="grid"  id="grid" data-dojo-props="rowsPerPage:'2', rowSelector:'20px'">
+      <thead>
+        <tr>
+          <th field="iwaterID" width="150" >Facility ID</th>
+          <th field="Name" width="200" >Name</th>
+          <th field="Utility" width="350" >Utility</th>
+           <th field="Date Last Edited" width="250" >Date Last Edited</th>
+           <th field="Plant4D Drawing ID" width="250" >Plant4D Drawing</th>
+    
+        </tr>
+      </thead>
+    </table>
+    </div>
+  </div>
+  </body>
+</html>

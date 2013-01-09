@@ -1,0 +1,50 @@
+﻿      html, body { height: 98%; width: 98%; margin: 0; padding: 5px; }
+      #leftPane{
+        width:20%;
+      }
+      #legendPane{
+        border: solid #97DCF2 1px;
+      }
+         #resultsPane{
+        height:12%;border: solid #97DCF2 1px;
+      }
+      
+      .styled-select select {
+   background: transparent;
+   width: 100px;
+   padding: 2px;
+   font-size: 12px;
+   border: 1px solid #ccc;
+   height: 25px;
+}
+
+
+#map_infowindow.simpleInfoWindow {
+        border: 2px solid #455268;
+        background-color: #dfe5d7;
+     
+ 
+      }
+     
+     
+      .claro .dijitButtonText {
+        color:#03c;
+        font-family: Arial, Helvetica, sans-serif
+        font-weight:bold;
+      }
+      .claro td.dijitMenuItemLabel {
+        color:#03c;
+        font-family: Arial, Helvetica, sans-serif
+        font-weight:500;
+      }
+      
+      
+      .zoominIcon { background-image:url(images/nav_zoomin.png); width:16px; height:16px; }
+      .zoomoutIcon { background-image:url(images/nav_zoomout.png); width:16px; height:16px; }
+      .zoomfullextIcon { background-image:url(images/nav_fullextent.png); width:16px; height:16px; }
+      .zoomprevIcon { background-image:url(images/nav_previous.png); width:16px; height:16px; }
+      .zoomnextIcon { background-image:url(images/nav_next.png); width:16px; height:16px; }
+      .panIcon { background-image:url(images/nav_pan.png); width:16px; height:16px; }
+      .deactivateIcon { background-image:url(images/nav_decline.png); width:16px; height:16px; }  
+      .chartIcon { background-image:url(images/graph.png); width:16px; height:16px; }
+      .propertyIcon { background-image:url(images/property.png); width:16px; height:16px;}

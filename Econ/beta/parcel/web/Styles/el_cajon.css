@@ -1,0 +1,28 @@
+﻿      html, body { height: 98%; width: 98%; margin: 0; padding: 5px; }
+      #leftPane{
+        width:20%;
+      }
+      #legendPane{
+        border: solid #97DCF2 1px;
+      }
+         #resultsPane{
+        height:12%;border: solid #97DCF2 1px;
+      }
+      
+      .styled-select select {
+   background: transparent;
+   width: 100px;
+   padding: 2px;
+   font-size: 12px;
+   border: 1px solid #ccc;
+   height: 25px;
+}
+
+
+#map_infowindow.simpleInfoWindow {
+        border: 2px solid #455268;
+        background-color: #dfe5d7;
+     
+ 
+      }
+     

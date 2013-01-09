@@ -1,0 +1,147 @@
+﻿ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Find Address</title>
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.1/js/dojo/dijit/themes/claro/claro.css">
+   
+    <style>
+      html, body {
+        height: 100%; width: 100%;
+        margin: 0; padding: 0;
+      }
+      #map{
+        padding:0;
+        border:solid 1px #343642;
+        margin:5px 5px 5px 0px;
+      }
+      .roundedCorners{
+        -webkit-border-radius: 4px;
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+      }
+      .shadow{
+         box-shadow: 4px 4px 8px #adadad;
+        -webkit-box-shadow: 4px 4px 8px #adadad;
+        -moz-box-shadow: 4px 4px 8px #adadad;
+        -o-box-shadow: 4px 4px 8px #adadad;
+      }    
+      #leftPane{
+        width:20%;
+        border-top: solid 1px #343642;
+        border-left: solid 1px #343642;
+        border-bottom: solid 1px #343642;
+        background-color:#DCDAC5;
+        margin:5px 0px 5px 5px;
+        color: #343642;
+        font:100% Georgia,"Times New Roman",Times,serif;
+        letter-spacing: 0.05em;
+      }
+     </style>
+
+    <script type="text/javascript">
+      var djConfig = {
+        parseOnLoad: true
+      };
+    </script>
+   
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1"></script>
+    <script type="text/javascript">
+      dojo.require("esri.map");
+      dojo.require("esri.tasks.locator");
+      dojo.require("dojo.number");
+      dojo.require("dijit.form.Button");
+      dojo.require("dijit.form.Textarea");
+      dojo.require("dijit.layout.BorderContainer");
+      dojo.require("dijit.layout.ContentPane");
+     
+     
+      var map, locator;
+
+      function init() {
+        var initExtent = new esri.geometry.Extent({"xmin":-13343554,"ymin":2967656,"xmax":-7473190,"ymax":5902838,"spatialReference":{"wkid":102100}});
+        map = new esri.Map("map", { extent: initExtent});
+
+        var tiledMapServiceLayer = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer");
+        map.addLayer(tiledMapServiceLayer);
+
+        dojo.connect(map, 'onLoad', function(map) {
+          //resize the map when the browser resizes
+          dojo.connect(dijit.byId('map'), 'resize', map,map.resize);
+        });
+
+
+      locator = new esri.tasks.Locator("http://phxfthmappdev01.gwfathom.net/ArcGIS/rest/services/GrassValley/streets_address_locator/GeocodeServer");
+        dojo.connect(locator, "onAddressToLocationsComplete", showResults);
+       
+        map.infoWindow.resize(200,125);
+      }
+
+      function locate() {
+        map.graphics.clear();
+        var address = { "SingleLine": dojo.byId("address").value };
+        locator.outSpatialReference= map.spatialReference;
+        var options = {
+          address:address,
+          outFields:["*"]
+        }
+        locator.addressToLocations(options);
+      }
+
+      function showResults(candidates) {
+        var candidate;
+        var symbol = new esri.symbol.SimpleMarkerSymbol();
+        var infoTemplate = new esri.InfoTemplate("Location", "Address: ${Match_addr}<br />Score: ${score}<br />Source locator: ${locatorName}");
+
+        symbol.setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_SQUARE);
+        symbol.setColor(new dojo.Color([153,0,51,0.75]));
+
+        var geom;
+       
+        dojo.every(candidates,function(candidate){
+          console.log(candidate.score);
+          if (candidate.score > 80) {
+            console.log(candidate.location);
+            var attributes = { address: candidate.address, score:candidate.score, locatorName:candidate.attributes.Loc_name };  
+            geom = candidate.location;
+            var graphic = new esri.Graphic(geom, symbol, attributes, infoTemplate);
+            //add a graphic to the map at the geocoded location
+            map.graphics.add(graphic);
+            //add a text symbol to the map listing the location of the matched address.
+            var displayText = candidate.address;
+            var font = new esri.symbol.Font("16pt",esri.symbol.Font.STYLE_NORMAL, esri.symbol.Font.VARIANT_NORMAL,esri.symbol.Font.WEIGHT_BOLD,"Helvetica");
+           
+            var textSymbol = new esri.symbol.TextSymbol(displayText,font,new dojo.Color("#666633"));
+            textSymbol.setOffset(0,8);
+            map.graphics.add(new esri.Graphic(geom, textSymbol));
+            return false; //break out of loop after one candidate with score greater  than 80 is found.
+          }
+        });
+        if(geom !== undefined){
+          map.centerAndZoom(geom,16);
+        }
+
+      }
+
+      dojo.addOnLoad(init);
+    </script>
+  </head>
+  <body class="claro">
+    <div id="mainWindow" dojotype="dijit.layout.BorderContainer" design="sidebar" gutters="false" style="width:100%; height:100%;">
+      <div id="leftPane" class="roundedCorners" dojotype="dijit.layout.ContentPane" region="left">
+        Enter an input address and the application will use the sample address locator to return the location for
+        street addresses in Grass Valley.
+        <br /><br />
+        <textarea type="text" id="address"/>2088 Nevada City Hwy Grass Valley, CA 95945 </textArea>
+        <br />
+        <button dojotype="dijit.form.Button" onclick="locate()"> Locate</button>
+      </div>
+      <div id="map" class="roundedCorners shadow" dojotype="dijit.layout.ContentPane" region="center">
+      </div>
+    </div>
+  </body>
+</html> 

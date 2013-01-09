@@ -1,0 +1,75 @@
+﻿ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />  
+   <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Goleta Field Audit Overview</title>
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.1/js/dojo/dijit/themes/claro/claro.css">
+    <style>
+      html, body { height: 98%; width: 98%; margin: 0; padding: 5px; }
+    </style>
+    <script type="text/javascript">        var djConfig = { parseOnLoad: true };</script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1"></script>
+   
+    <script type="text/javascript">
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("dijit.layout.AccordionContainer");
+        dojo.require("esri.map");
+        dojo.require("esri.layers.wms");
+
+        var map;
+
+
+        function init() {
+            esri.config.defaults.io.proxyUrl = "/arcgisserver/apis/javascript/proxy/proxy.ashx";
+
+
+            var initialExtent = new esri.geometry.Extent({ "xmin": -119.93343420395, "ymin": 34.4001898314001, "xmax": -119.72351346105, "ymax": 34.4833200566001, "spatialReference": { "wkid": 4326} });
+            map = new esri.Map("map", { extent: esri.geometry.geographicToWebMercator(initialExtent) });
+
+
+            var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer");
+            map.addLayer(basemap);
+
+            var parcels = new esri.layers.WMSLayerInfo({ name: "0", title: "Parcels" });
+
+            var resourceInfo = {
+                extent: new esri.geometry.Extent(-119.93343420395, 34.4001898314001, -119.72351346105, 34.4833200566001, { wkid: 4326 }),
+                layerInfos: [parcels]
+            };
+
+
+            var par = new esri.layers.WMSLayer("http://phxfthmappprd01.gwfathom.net/ArcGIS/services/Goleta_website/MapServer/WMSServer",
+                 { resourceInfo: resourceInfo,
+                     visibleLayers: ["0"]
+                 }
+                    );
+
+
+            map.addLayer(par);
+
+
+            dojo.connect(map, 'onLoad', function (theMap) {
+                //resize the map when the browser resizes
+                dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
+            });
+        }
+
+
+
+        dojo.addOnLoad(init);
+    </script>
+  </head>
+ 
+  <body class="claro">
+    <div id="content" dojotype="dijit.layout.BorderContainer" design="headline" gutters="true" style="width: 100%; height: 100%; margin: 0;">
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="overflow:hidden;">
+      </div>
+    </div>
+  </body>
+ 
+</html> 

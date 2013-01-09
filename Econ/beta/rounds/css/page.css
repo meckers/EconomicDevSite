@@ -1,0 +1,29 @@
+html, body { 
+        height: 98%; width: 98%; 
+        padding: 0;
+        overflow:hidden;
+      }
+      #mapDiv{
+        padding:0;
+        border: solid 2px #705B35;
+      }
+      .roundedCorners {
+        -moz-border-radius: 4px;
+        border-radius: 4px;
+      }
+      #detailPane{
+        height:20px;
+        color:#570026;
+        font-size:12pt;
+        font-weight:600;
+        overflow:hidden;
+      }
+      .dj_ie .infowindow .window .top .right .user .content { position: relative; }
+      .dj_ie .simpleInfoWindow .content {position: relative;}
+
+      .esriAttributeInspector {height:100px;}
+      .esriAttributeInspector .atiLayerName {display:none;}
+      .saveButton {
+        padding-left:45px;
+         margin:0px;width:16px; height:16px;
+       }

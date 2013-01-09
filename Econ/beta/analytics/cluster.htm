@@ -1,0 +1,119 @@
+﻿
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd"> 
+<html> 
+  <head> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"> 
+    <title>ESRI JavaScript API - Clustering</title> 
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/2.1/js/dojo/dijit/themes/claro/claro.css"> 
+    <style> 
+      html, body { height: 100%; width: 100%; margin: 0; padding: 0; }
+    </style> 
+    <script type="text/javascript">        var djConfig = { parseOnLoad: true };</script> 
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.1"></script> 
+ 
+    <!--Include cluster layer --> 
+    <script type="text/javascript" src="./Ext.util.DelayedTask-nsRemoved.js"></script> 
+    <script type="text/javascript" src="./esri.ux.layers.ClusterLayer-debug.js"></script> 
+ 
+    <script type="text/javascript">
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("esri.map");
+
+        //required for clustering logic
+        //dojo.require("dojox.lang.functional");
+        //dojo.require("dojox.lang.functional.lambda");
+        //dojo.require("dojox.lang.functional.curry");
+        //dojo.require("dojox.lang.functional.fold");
+
+        var map;
+
+        function init() {
+            var initExtent = new esri.geometry.Extent({ "xmin": -11829031.11737544, "ymin": 4019794.237850692, "xmax": -10034901.189466268, "ymax": 5218326.8413619315, "spatialReference": { "wkid": 102100} });
+            map = new esri.Map("map", { extent: initExtent });
+
+            var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer");
+            map.addLayer(basemap);
+
+            var basemap2 = new esri.layers.ArcGISTiledMapServiceLayer("http://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer");
+            map.addLayer(basemap2);
+
+            //resize the map when the browser resizes - view the 'Resizing and repositioning the map' section in
+            //the following help topic for more details http://help.esri.com/EN/webapi/javascript/arcgis/help/jshelp_start.htm#jshelp/inside_guidelines.htm
+            var resizeTimer;
+            dojo.connect(map, 'onLoad', function (theMap) {
+                dojo.connect(dijit.byId('map'), 'resize', function () {  //resize the map if the div is resized
+                    clearTimeout(resizeTimer);
+                    resizeTimer = setTimeout(function () {
+                        map.resize();
+                        map.reposition();
+                    }, 500);
+                });
+            });
+
+            runQuery();
+        }
+
+        function runQuery() {
+
+            var queryTask = new esri.tasks.QueryTask("http://sampleserver3.arcgisonline.com/ArcGIS/rest/services/Petroleum/KSPetro/MapServer/0");
+
+            var query = new esri.tasks.Query();
+            query.returnGeometry = true;
+            query.where = '1=1';
+            query.outFields = ["*"];
+
+            dojo.connect(queryTask, "onComplete", function (featureSet) {
+
+                var cL = new esri.ux.layers.ClusterLayer({
+                    displayOnPan: false,
+                    map: map,
+                    features: featureSet.features,
+                    infoWindow: {
+                        template: new esri.InfoTemplate('${API_WELL_N}', '<b>Operator:</b> ${OPERATOR_N}'),
+                        width: 225,
+                        height: 85
+                    },
+                    flareLimit: 15,
+                    flareDistanceFromCenter: 20
+                });
+
+                map.addLayer(cL);
+
+            });
+
+            dojo.connect(queryTask, "onError", function (err) {
+                alert(err.details);
+            });
+
+            queryTask.execute(query);
+        }
+
+        dojo.addOnLoad(init);
+    </script> 
+ 
+	<script type="text/javascript">
+
+	    var _gaq = _gaq || [];
+	    _gaq.push(['_setAccount', 'UA-17388158-4']);
+	    _gaq.push(['_trackPageview']);
+
+	    (function () {
+	        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+	        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+	        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+	    })();
+
+	</script>
+ 
+  </head> 
+ 
+  <body class="claro"> 
+    <div dojotype="dijit.layout.BorderContainer" design="headline" gutters="false"
+    style="width: 100%; height: 100%; margin: 0;"> 
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="overflow:hidden;"> 
+      </div> 
+    </div> 
+  </body> 
+ 
+</html>

@@ -1,0 +1,138 @@
+﻿<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  
+
+    <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>City Of Maricopa Site Selector</title>
+    <link rel="stylesheet" type="text/css" href="Styles/site_selector.css"  />
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dojox/grid/resources/Grid.css">
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.0/js/dojo/dojox/grid/resources/claroGrid.css">
+    
+    <script type="text/javascript"> var djConfig = { parseOnLoad: true };</script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.0"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/dojo/1.7.2/dojo/dojo.js"></script>
+    <script type="text/javascript" src="js/site_selector.js"></script>
+  </head>
+ 
+  <body class="claro">
+
+    
+     <div id="content" dojotype="dijit.layout.BorderContainer" data-dojo-props="design:'sidebar', gutters:true, liveSplitters:true"  class="borderContainer">
+      
+      <div id="banner" dojotype="dijit.layout.ContentPane" region="top" style="height:55px; overflow:hidden;" class="banner">
+          <img src="images/banner.png" />
+      </div>
+  <div id="leftPane" dojotype="dijit.layout.ContentPane" region="left" data-dojo-props="splitter:true">
+        <div dojoType="dijit.layout.AccordionContainer" id="yes">
+
+       
+          <div dojoType="dijit.layout.ContentPane" id="site" title="<strong>Site Selector</strong>"  selected="true">            
+            <div id="search" class="styled-select">
+<strong>Find Sites that are between</strong>
+
+     <p><div id="area1"> </div></p>
+     <input type="label" id="areaSlider" data-dojo-type="dijit.form.TextBox" class="box" value = "0" /> Acres and  
+     
+     <p><div id="area2"></div></p>
+     <input type="label" id="areaSlider2" data-dojo-type="dijit.form.TextBox" class="box" value ="200"/> Acres  
+    <p></p>
+     <p><strong>and are within</strong></p>
+
+
+     <p><div id="water"></div></p>
+     <input type="label" id="waterSlider" data-dojo-type="dijit.form.TextBox" class="box" value ="350"/> Feet of Water  
+
+     <p><div id="sewer"></div></p>
+     <input type="label" id="sewerSlider" data-dojo-type="dijit.form.TextBox" class="box" value ="350"/> Feet of Sewer  
+     
+     <p><div id="elec"></div></p>
+     <input type="label" id="elecSlider" data-dojo-type="dijit.form.TextBox" class="box" value ="350"/> Feet of Electric 
+
+     <p><div id="tel"></div></p>
+     <input type="label" id="telSlider" data-dojo-type="dijit.form.TextBox" class="box" value ="350"/> Feet of Telecom
+  
+  <p></p>
+   <p><strong> and are in the following Zoning Districts</strong></p>
+
+
+   <p>
+   <form id="zform">
+   <select data-dojo-type="dijit.form.MultiSelect" id="zone" name="zone" size="10" class="ms" >
+                <option value = "'CB-1','CB-2','CI-1','CI-2','CL-2','CR-3','DR','GR'" selected="selected">Any</option>
+                <option value="'CB-1'">CB-1</option>
+                <option value="'CB-2'">CB-2</option>
+                <option value="'CI-1'" >Cl-1</option>
+                <option value="'CI-2'">CI-2</option>
+                <option value="'CL-2'">CL-2</option>
+                <option value="'CR-3'">CR-3</option>
+                <option value="'DR'">DR</option>
+                <option value="'GR'">GR</option>
+    </select>
+    </form>
+    </p>
+
+     <input type="button" value="Find!" onclick="executeQuery();" />         
+     <input type="button" value="Start Over" onclick="clearQuery();" />  
+    
+            
+            
+            </div>
+          </div>
+          <div dojoType="dijit.layout.ContentPane" title="<strong>Layers</strong>" >
+            <div id="toggle" style="padding: 2px 2px;"></div>
+          </div>
+          <div dojoType="dijit.layout.ContentPane" id="legendPane" title="<strong>Legend</strong>">
+            <div id="legendDiv"></div>
+          </div>
+          <div dojoType="dijit.layout.ContentPane" id="yup" title="<strong>Site Information</strong>" class="results">
+         
+          </div>
+        </div>
+      </div>
+      
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="overflow:hidden;" data-dojo-props="splitter:true">
+            <div style="position:absolute; right:20px; top:10px; z-Index:999;" class = "parts">
+              <div dojoType="dijit.TitlePane" title="Switch Basemap" closable="false"  open="false">
+	             <div dojoType="dijit.layout.ContentPane" style="width:380px; height:280px; overflow:auto;">    
+		             <div id="basemapGallery" ></div>
+                 </div>
+             </div>
+           </div> 
+      </div>
+
+   <div data-dojo-type="dijit.layout.ContentPane" data-dojo-props="region:'bottom',splitter:true" style="height:250px;" class = "parts" >
+     <table data-dojo-type="dojox.grid.EnhancedGrid" jsid="grid" data-dojo-id="grid"  id="grid" data-dojo-props="rowsPerPage:'5', rowSelector:'20px', plugins:{exporter: true}">
+      <thead>
+        <tr>
+          <th field="Parcel_Number" width="20%">Parcel Number</th>
+          <th field="Address" width="40%">Address</th>
+          <th field="Zoning_Class" width="20%">Zoning</th>
+          <th field="Acreage" width="20%">Acres</th>
+        </tr>
+      </thead>
+    </table>
+    </div>
+   
+    </div>
+
+    <div id="disclaimer" title="" data-dojo-type="dijit.Dialog" class="parts">
+    This map is provided for informational purposes only. Users should review or consult the<br />
+    primary data and information sources to ascertain the usability of this information. 
+  <p>For the best user experience, please use one of the following web browsers:<br /> <ul>
+  <li>Mozilla Firefox</li>
+  <li>Google Chrome</li>
+  <li>Internet Explorer 9 or above</li>
+  </ul></p><br />
+  
+<p><button data-dojo-type="dijit.form.Button" type="button" data-dojo-props="onClick:function(){dijit.byId('disclaimer').hide();}">OK</button></p>
+</div>
+  </body>
+ 
+</html>

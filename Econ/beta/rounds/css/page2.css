@@ -1,0 +1,40 @@
+html, body {
+         height: 100%;
+         width: 100%;
+         margin: 0; 
+        padding: 0;
+       }
+       body {
+         background-color:#fff;
+         overflow:hidden;      
+       }
+       #header{
+         border:solid 2px #AAc4c4;
+         background:#fff;
+         color:#0066cc;
+         font-size:14px;
+         font-family:Arial;
+         padding-left:20px;
+         font-weight:700;
+       }
+       #map{
+         padding:1px;
+         border:solid 2px #AAc4c4;
+         -moz-border-radius: 4px;
+         border-radius: 4px;
+       }
+       #leftPane{
+         border:none;
+         width:95px;
+       }
+       .templatePicker {
+         border:solid 2px #AAc4c4 !important;
+       }
+       .dj_ie .infowindow .window .top .right .user .content { position: relative; }
+       .dj_ie .simpleInfoWindow .content {position: relative;}
+     </style>
+     <script type="text/javascript">
+       var dojoConfig = {
+         parseOnLoad: true
+       };
+ 

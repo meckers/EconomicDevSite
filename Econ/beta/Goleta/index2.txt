@@ -1,0 +1,202 @@
+ <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=7,IE=9" />  
+   <!--The viewport meta tag is used to improve the presentation and behavior of the samples
+      on iOS devices-->
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no"/>
+    <title>Goleta Field Audit Overview</title>
+    <link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.1/js/dojo/dijit/themes/claro/claro.css">
+    <style>
+      html, body { height: 98%; width: 98%; margin: 0; padding: 5px; }
+      @import "http://serverapi.arcgisonline.com/jsapi/arcgis/3.1/js/dojo/dijit/themes/claro/claro.css";
+      .zoominIcon { background-image:url(images/nav_zoomin.png); width:16px; height:16px; }
+      .zoomoutIcon { background-image:url(images/nav_zoomout.png); width:16px; height:16px; }
+      .zoomfullextIcon { background-image:url(images/nav_fullextent.png); width:16px; height:16px; }
+      .zoomprevIcon { background-image:url(images/nav_previous.png); width:16px; height:16px; }
+      .zoomnextIcon { background-image:url(images/nav_next.png); width:16px; height:16px; }
+      .panIcon { background-image:url(images/nav_pan.png); width:16px; height:16px; }
+      .deactivateIcon { background-image:url(images/nav_decline.png); width:16px; height:16px; }
+    </style>
+
+
+
+    <script type="text/javascript">        var djConfig = { parseOnLoad: true };</script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=3.1"></script>
+   
+    <script type="text/javascript">
+        
+        dojo.require("dijit.dijit");
+        dojo.require("dijit.layout.BorderContainer");
+        dojo.require("dijit.layout.ContentPane");
+        dojo.require("dijit.layout.AccordionContainer");
+        dojo.require("dijit.TitlePane");
+        dojo.require("esri.map");
+        dojo.require("esri.layers.wms");
+        dojo.require("esri.dijit.BasemapGallery");
+        dojo.require("esri.arcgis.utils");
+        dojo.require("esri.toolbars.navigation");
+        dojo.require("dijit.form.Button");
+        dojo.require("dijit.Toolbar");
+                
+        
+
+        var map;
+        var loading;
+
+
+        function init() {
+           
+            loading = dojo.byId("loadingImg");  //loading image. id
+            esri.config.defaults.map.sliderLabel = null;
+
+
+
+            var lods = [
+          {
+              "level": 13,
+              "resolution": 19.1092570712683,
+              "scale": 72223.819286
+          },
+          {
+              "level": 14,
+              "resolution": 9.55462853563415,
+              "scale": 36111.909643
+          },
+          {
+              "level": 15,
+              "resolution": 4.77731426794937,
+              "scale": 18055.954822
+          },
+          {
+              "level": 16,
+              "resolution": 2.38865713397468,
+              "scale": 9027.977411
+          },
+          {
+              "level": 17,
+              "resolution": 1.19432856685505,
+              "scale": 4513.988705
+          }
+        ];
+
+
+            var initialExtent = new esri.geometry.Extent({ "xmin": -119.93343420395, "ymin": 34.4001898314001, "xmax": -119.72351346105, "ymax": 34.4833200566001, "spatialReference": { "wkid": 4326} });
+            map = new esri.Map("map", { extent: esri.geometry.geographicToWebMercator(initialExtent), lods: lods });
+
+            createBasemapGallery();
+
+            var basemap = new esri.layers.ArcGISTiledMapServiceLayer("http://services.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer");
+            map.addLayer(basemap);
+
+            var parcels = new esri.layers.WMSLayerInfo({ name: "0", title: "Parcels" });
+
+            var resourceInfo = {
+                extent: new esri.geometry.Extent(-119.93343420395, 34.4001898314001, -119.72351346105, 34.4833200566001, { wkid: 4326 }),
+                layerInfos: [parcels]
+            };
+
+
+            var par = new esri.layers.WMSLayer("http://54.245.16.29:6080/arcgis/services/Goleta_website/MapServer/WMSServer",
+                 { resourceInfo: resourceInfo,
+                     visibleLayers: ["0"]
+                 }
+                    );
+
+
+                 var dots = new esri.layers.FeatureLayer("http://54.245.16.29:6080/arcgis/rest/services/Goleta_Web_Site/MapServer/0", {
+                     mode: esri.layers.FeatureLayer.MODE_ONDEMAND,
+                     outFields: ["OBJECTID"]
+                 });
+
+
+
+
+                      map.addLayer(par);
+                
+
+          //       dojo.connect(map, "onUpdateStart", showLoading);
+           //      dojo.connect(map, "onUpdateEnd", hideLoading);
+
+       //     dojo.connect(map, 'onLoad', function (theMap) {
+                //resize the map when the browser resizes
+          //      dojo.connect(dijit.byId('map'), 'resize', map, map.resize);
+        //    });
+
+
+            navToolbar = new esri.toolbars.Navigation(map);
+            dojo.connect(navToolbar, "onExtentHistoryChange", extentHistoryChangeHandler);
+
+
+
+        }
+
+
+        function createBasemapGallery() {
+            var basemapGallery = new esri.dijit.BasemapGallery({
+                showArcGISBasemaps: true,
+                map: map
+            }, "basemapGallery");
+
+            var selectionHandler = dojo.connect(basemapGallery, "onSelectionChange", function () {
+                dojo.disconnect(selectionHandler);
+ 
+            });
+
+            basemapGallery.startup();
+
+
+            dojo.connect(basemapGallery, "onError", function (msg) { console.log(msg) });
+        }
+     
+
+     //   function showLoading() {
+      //      esri.show(loading);
+     //       map.disableMapNavigation();
+     //       map.hideZoomSlider();
+     //   }
+
+      //  function hideLoading(error) {
+       //     esri.hide(loading);
+        //    map.enableMapNavigation();
+       //     map.showZoomSlider();
+     //   }
+
+        dojo.addOnLoad(init);
+    </script>
+  </head>
+ 
+  <body class="claro">
+    <div id="content" dojotype="dijit.layout.BorderContainer" design="headline" gutters="true" style="width: 100%; height: 100%; margin: 0;">
+      
+      <div id="banner" dojotype="dijit.layout.ContentPane" region="top" style="height:55px;overflow:hidden; background-image: url(images/gradient.png);
+background-size:1px 100%;">
+          <img src='images/banner2.png' />
+      
+      </div>
+      <div id="map" dojotype="dijit.layout.ContentPane" region="center" style="overflow:hidden;">
+
+        <div id="navToolbar" data-dojo-type="dijit.Toolbar" style="position:absolute; right:20px; top:20px; z-Index:999;">
+      <div data-dojo-type="dijit.form.Button" id="zoomin"  data-dojo-props="iconClass:'zoominIcon', onClick:function(){navToolbar.activate(esri.toolbars.Navigation.ZOOM_IN);}">Zoom In</div>
+      <div data-dojo-type="dijit.form.Button" id="zoomout" data-dojo-props="iconClass:'zoomoutIcon', onClick:function(){navToolbar.activate(esri.toolbars.Navigation.ZOOM_OUT);}">Zoom Out</div>
+      <div data-dojo-type="dijit.form.Button" id="zoomprev" data-dojo-props="iconClass:'zoomprevIcon', onClick:function(){navToolbar.zoomToPrevExtent();}">Prev Extent</div>
+      <div data-dojo-type="dijit.form.Button" id="zoomnext" data-dojo-props="iconClass:'zoomnextIcon', onClick:function(){navToolbar.zoomToNextExtent();}">Next Extent</div>
+      <div data-dojo-type="dijit.form.Button" id="pan" data-dojo-props="iconClass:'panIcon', onClick:function(){navToolbar.activate(esri.toolbars.Navigation.PAN);}">Pan</div>
+
+    </div>
+
+         <div style="position:absolute; right:20px; top:55px; z-Index:999;">
+        <div dojoType="dijit.TitlePane" title="Switch Basemap" closable="false"  open="false">
+          <div dojoType="dijit.layout.ContentPane" style="width:380px; height:280px; overflow:auto;">
+          <div id="basemapGallery" ></div></div>
+        </div>
+      </div>
+
+   
+     
+    </div>
+  </body>
+ 
+</html> 
+
